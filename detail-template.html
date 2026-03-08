@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Java 每日动态</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            padding: 30px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
+        }
+        .back-btn {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        .back-btn:hover {
+            background: #f89820;
+            color: #1a1a2e;
+        }
+        h1 {
+            font-size: 2rem;
+            color: #f89820;
+            margin-bottom: 10px;
+        }
+        .stats {
+            display: flex;
+            gap: 30px;
+            margin: 20px 0;
+        }
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.1rem;
+        }
+        .stat-star { color: #ffd700; }
+        .stat-fork { color: #888; }
+        .section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        .section h2 {
+            font-size: 1.3rem;
+            color: #f89820;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .section p {
+            line-height: 1.8;
+            color: #ddd;
+        }
+        .code-block {
+            background: #0d1117;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        .code-block code {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+            color: #c9d1d9;
+        }
+        .tag {
+            display: inline-block;
+            padding: 6px 14px;
+            background: rgba(248, 152, 32, 0.2);
+            color: #f89820;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        .home-link {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #f89820;
+            color: #1a1a2e;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+        .home-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(248, 152, 32, 0.4);
+        }
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="back-btn">← 返回首页</a>
+            <h1><%= title %></h1>
+            <div class="stats">
+                <span class="stat stat-star">⭐ <%= stars %></span>
+                <span class="stat stat-fork">🍴 <%= forks %></span>
+            </div>
+            <div class="tags">
+                <%= tags %>
+            </div>
+        </header>
+
+        <div class="section">
+            <h2>📖 项目介绍</h2>
+            <p><%= description %></p>
+        </div>
+
+        <div class="section">
+            <h2>🚀 快速开始</h2>
+            <%= install %>
+        </div>
+
+        <div class="section">
+            <h2>💡 使用示例</h2>
+            <%= usage %>
+        </div>
+
+        <div class="section">
+            <h2>📚 资料推荐</h2>
+            <p><%= resources %></p>
+        </div>
+
+        <a href="index.html" class="home-link">← 返回首页</a>
+
+        <footer>
+            <p>🎯 Java 每日动态 | 由 OpenClaw 自动更新</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -65,7 +65,7 @@
         }
         .project-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 20px;
         }
         .project-card {
@@ -74,6 +74,7 @@
             padding: 20px;
             transition: transform 0.3s, box-shadow 0.3s;
             border: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer;
         }
         .project-card:hover {
             transform: translateY(-5px);
@@ -86,6 +87,11 @@
             margin-bottom: 8px;
             word-break: break-all;
             font-weight: bold;
+            text-decoration: none;
+            display: block;
+        }
+        .project-name:hover {
+            color: #ff6b6b;
         }
         .project-desc {
             color: #aaa;
@@ -182,24 +188,12 @@
         </footer>
     </div>
 
+    <script src="js/projects.js"></script>
     <script>
-        // 静态数据（API 失败时的备用）
-        const trendingProjects = [
-            { name: 'Snailclimb/JavaGuide', stars: 154109, forks: 46126, desc: 'Java 面试 & 后端开发指南' },
-            { name: 'krahets/hello-algo', stars: 122801, forks: 14869, desc: '动画图解数据结构与算法教程' },
-            { name: 'GrowingGit/GitHub-Chinese-Top-Charts', stars: 106681, forks: 13528, desc: 'GitHub中文排行榜' },
-            { name: 'iluwatar/java-design-patterns', stars: 93798, forks: 27375, desc: 'Java 设计模式' },
-            { name: 'macrozheng/mall', stars: 83054, forks: 29671, desc: '电商系统实战项目' },
-            { name: 'spring-projects/spring-boot', stars: 80197, forks: 41857, desc: 'Spring Boot 官方框架' },
-            { name: 'doocs/advanced-java', stars: 78880, forks: 19275, desc: 'Java 面试进阶指南' },
-            { name: 'MisterBooo/LeetCodeAnimation', stars: 76720, forks: 13989, desc: 'LeetCode 动画题解' },
-            { name: 'elastic/elasticsearch', stars: 76295, forks: 25807, desc: '分布式搜索引擎' },
-            { name: 'NationalSecurityAgency/ghidra', stars: 65496, forks: 7224, desc: '软件逆向工程框架' },
-            { name: 'TheAlgorithms/Java', stars: 65172, forks: 21010, desc: 'Java 算法实现' },
-            { name: 'spring-projects/spring-framework', stars: 59728, forks: 38911, desc: 'Spring 核心框架' },
-        ];
-
+        // 常用工具列表
         const tools = [
+            { name: 'spring-boot', desc: 'Spring Boot 官方框架', tags: ['Spring', 'Web'] },
+            { name: 'spring-framework', desc: 'Spring 核心框架', tags: ['Spring', 'Framework'] },
             { name: 'netty/netty', desc: '高性能异步网络框架', tags: ['网络', 'IO'] },
             { name: 'alibaba/easyexcel', desc: 'Java Excel 处理工具', tags: ['工具', 'Excel'] },
             { name: 'alibaba/nacos', desc: '服务发现与配置中心', tags: ['微服务', '配置'] },
@@ -212,6 +206,8 @@
             { name: 'apolloconfig/apollo', desc: '配置管理中心', tags: ['配置', '微服务'] },
             { name: 'google/guava', desc: 'Google 核心工具库', tags: ['工具', 'Google'] },
             { name: 'hutool/hutool', desc: 'Java 工具集', tags: ['工具', '国产'] },
+            { name: 'alibaba/fastjson', desc: 'JSON 解析库', tags: ['JSON', '工具'] },
+            { name: 'alibaba/Sentinel', desc: '流量控制组件', tags: ['熔断', '限流'] },
         ];
 
         function switchTab(tabId) {
@@ -233,37 +229,41 @@
 
         function renderProjects(projects, containerId) {
             const container = document.getElementById(containerId);
-            container.innerHTML = projects.map(p => `
-                <div class="project-card">
-                    <div class="project-name">${p.name}</div>
-                    <div class="project-desc">${p.desc || '暂无描述'}</div>
-                    <div class="project-stats">
-                        <span class="stat stat-star">⭐ ${p.stars.toLocaleString()}</span>
-                        <span class="stat stat-fork">🍴 ${p.forks.toLocaleString()}</span>
+            container.innerHTML = projects.map(p => {
+                const detail = projectDetails[p.name];
+                const link = detail ? `detail.html?project=${encodeURIComponent(p.name)}` : '#';
+                return `
+                    <div class="project-card" onclick="window.location.href='${link}'">
+                        <a href="${link}" class="project-name">${p.name}</a>
+                        <div class="project-desc">${p.desc || '暂无描述'}</div>
+                        <div class="project-stats">
+                            <span class="stat stat-star">⭐ ${p.stars.toLocaleString()}</span>
+                            <span class="stat stat-fork">🍴 ${p.forks.toLocaleString()}</span>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
-        function renderTools(toolsData) {
-            const container = document.getElementById('toolsContent');
-            container.innerHTML = toolsData.map(t => `
-                <div class="project-card">
-                    <div class="project-name">${t.name}</div>
-                    <div class="project-desc">${t.desc}</div>
-                    <div style="margin-top:10px">
-                        ${t.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function loadTrending() {
+        async function loadTrending() {
             renderProjects(trendingProjects, 'trendingContent');
         }
 
-        function loadTools() {
-            renderTools(tools);
+        async function loadTools() {
+            const container = document.getElementById('toolsContent');
+            container.innerHTML = tools.map(t => {
+                const detail = projectDetails[t.name];
+                const link = detail ? `detail.html?project=${encodeURIComponent(t.name)}` : '#';
+                return `
+                    <div class="project-card" onclick="window.location.href='${link}'">
+                        <a href="${link}" class="project-name">${t.name}</a>
+                        <div class="project-desc">${t.desc}</div>
+                        <div style="margin-top:10px">
+                            ${t.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         function loadNews() {

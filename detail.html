@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目详情 - Java 每日动态</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            padding: 30px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
+        }
+        .back-btn {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        .back-btn:hover {
+            background: #f89820;
+            color: #1a1a2e;
+        }
+        h1 {
+            font-size: 2rem;
+            color: #f89820;
+            margin-bottom: 10px;
+        }
+        .stats {
+            display: flex;
+            gap: 30px;
+            margin: 20px 0;
+        }
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.1rem;
+        }
+        .stat-star { color: #ffd700; }
+        .stat-fork { color: #888; }
+        .section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        .section h2 {
+            font-size: 1.3rem;
+            color: #f89820;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .section p {
+            line-height: 1.8;
+            color: #ddd;
+        }
+        .code-block {
+            background: #0d1117;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        .code-block code {
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            font-size: 0.9rem;
+            color: #c9d1d9;
+            white-space: pre;
+        }
+        .tag {
+            display: inline-block;
+            padding: 6px 14px;
+            background: rgba(248, 152, 32, 0.2);
+            color: #f89820;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        .home-link {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #f89820;
+            color: #1a1a2e;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+        .home-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(248, 152, 32, 0.4);
+        }
+        .not-found {
+            text-align: center;
+            padding: 100px 20px;
+        }
+        .not-found h2 {
+            color: #f89820;
+            margin-bottom: 20px;
+        }
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="back-btn">← 返回首页</a>
+            <h1 id="title">加载中...</h1>
+            <div class="stats">
+                <span class="stat stat-star">⭐ <span id="stars">-</span></span>
+                <span class="stat stat-fork">🍴 <span id="forks">-</span></span>
+            </div>
+            <div id="tags"></div>
+        </header>
+
+        <div class="section" id="intro-section">
+            <h2>📖 项目介绍</h2>
+            <p id="description">加载中...</p>
+        </div>
+
+        <div class="section" id="install-section">
+            <h2>🚀 快速开始</h2>
+            <div class="code-block" id="install-code"></div>
+        </div>
+
+        <div class="section" id="usage-section">
+            <h2>💡 使用示例</h2>
+            <div class="code-block" id="usage-code"></div>
+        </div>
+
+        <div class="section" id="resources-section">
+            <h2>📚 资料推荐</h2>
+            <p id="resources"></p>
+        </div>
+
+        <a href="index.html" class="home-link">← 返回首页</a>
+
+        <footer>
+            <p>🎯 Java 每日动态 | 由 OpenClaw 自动更新</p>
+        </footer>
+    </div>
+
+    <script src="js/projects.js"></script>
+    <script>
+        // URL 参数获取
+        function getQueryParam(name) {
+            const params = new URLSearchParams(window.location.search);
+            return params.get(name);
+        }
+
+        // 加载项目详情
+        function loadDetail() {
+            const projectName = getQueryParam('project');
+            
+            if (!projectName || !projectDetails[projectName]) {
+                document.body.innerHTML = `
+                    <div class="container">
+                        <div class="not-found">
+                            <h2>😢 项目详情未找到</h2>
+                            <p>该项目暂未添加详情页</p>
+                            <a href="index.html" class="home-link">← 返回首页</a>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            const detail = projectDetails[projectName];
+            
+            // 更新页面内容
+            document.getElementById('title').textContent = detail.title;
+            document.getElementById('description').textContent = detail.description;
+            document.getElementById('tags').innerHTML = detail.tags;
+            document.getElementById('install-code').innerHTML = '<code>' + detail.install + '</code>';
+            document.getElementById('usage-code').innerHTML = '<code>' + detail.usage + '</code>';
+            document.getElementById('resources').innerHTML = detail.resources.replace(/\n/g, '<br>');
+            
+            // 获取 GitHub 上的 star 数量
+            fetch(`https://api.github.com/repos/${projectName}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.stargazers_count) {
+                        document.getElementById('stars').textContent = data.stargazers_count.toLocaleString();
+                        document.getElementById('forks').textContent = data.forks_count.toLocaleString();
+                    }
+                })
+                .catch(err => console.log(err));
+        }
+
+        // 页面加载完成后执行
+        loadDetail();
+    </script>
+</body>
+</html>
