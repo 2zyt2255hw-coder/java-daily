@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java 每日动态</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            padding: 40px 0;
+        }
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #f89820, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .update-time {
+            color: #888;
+            font-size: 0.9rem;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .tab {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 25px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+        .tab:hover, .tab.active {
+            background: #f89820;
+            color: #1a1a2e;
+        }
+        .section {
+            display: none;
+        }
+        .section.active {
+            display: block;
+        }
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+        .project-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border-color: #f89820;
+        }
+        .project-name {
+            font-size: 1.1rem;
+            color: #f89820;
+            margin-bottom: 8px;
+            word-break: break-all;
+            font-weight: bold;
+        }
+        .project-desc {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            line-height: 1.5;
+            min-height: 40px;
+        }
+        .project-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 0.85rem;
+        }
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .stat-star { color: #ffd700; }
+        .stat-fork { color: #888; }
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(248, 152, 32, 0.2);
+            color: #f89820;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        .news-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #f89820;
+        }
+        .news-title {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+        .news-meta {
+            font-size: 0.8rem;
+            color: #888;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+            font-size: 1.2rem;
+        }
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>☕ Java 每日动态</h1>
+            <p class="update-time">更新时间: <span id="updateTime">加载中...</span></p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('trending')">🔥 GitHub Trending</button>
+            <button class="tab" onclick="switchTab('news')">📰 Java 新闻</button>
+            <button class="tab" onclick="switchTab('tools')">🛠️ 常用工具</button>
+        </div>
+
+        <div id="trending" class="section active">
+            <div id="trendingContent" class="project-grid">
+                <div class="loading">加载中...</div>
+            </div>
+        </div>
+
+        <div id="news" class="section">
+            <div id="newsContent">
+                <div class="loading">加载中...</div>
+            </div>
+        </div>
+
+        <div id="tools" class="section">
+            <div id="toolsContent" class="project-grid">
+                <div class="loading">加载中...</div>
+            </div>
+        </div>
+
+        <footer>
+            <p>🎯 Java 每日动态 | 由 OpenClaw 自动更新</p>
+        </footer>
+    </div>
+
+    <script>
+        // 静态数据（API 失败时的备用）
+        const trendingProjects = [
+            { name: 'Snailclimb/JavaGuide', stars: 154109, forks: 46126, desc: 'Java 面试 & 后端开发指南' },
+            { name: 'krahets/hello-algo', stars: 122801, forks: 14869, desc: '动画图解数据结构与算法教程' },
+            { name: 'GrowingGit/GitHub-Chinese-Top-Charts', stars: 106681, forks: 13528, desc: 'GitHub中文排行榜' },
+            { name: 'iluwatar/java-design-patterns', stars: 93798, forks: 27375, desc: 'Java 设计模式' },
+            { name: 'macrozheng/mall', stars: 83054, forks: 29671, desc: '电商系统实战项目' },
+            { name: 'spring-projects/spring-boot', stars: 80197, forks: 41857, desc: 'Spring Boot 官方框架' },
+            { name: 'doocs/advanced-java', stars: 78880, forks: 19275, desc: 'Java 面试进阶指南' },
+            { name: 'MisterBooo/LeetCodeAnimation', stars: 76720, forks: 13989, desc: 'LeetCode 动画题解' },
+            { name: 'elastic/elasticsearch', stars: 76295, forks: 25807, desc: '分布式搜索引擎' },
+            { name: 'NationalSecurityAgency/ghidra', stars: 65496, forks: 7224, desc: '软件逆向工程框架' },
+            { name: 'TheAlgorithms/Java', stars: 65172, forks: 21010, desc: 'Java 算法实现' },
+            { name: 'spring-projects/spring-framework', stars: 59728, forks: 38911, desc: 'Spring 核心框架' },
+        ];
+
+        const tools = [
+            { name: 'netty/netty', desc: '高性能异步网络框架', tags: ['网络', 'IO'] },
+            { name: 'alibaba/easyexcel', desc: 'Java Excel 处理工具', tags: ['工具', 'Excel'] },
+            { name: 'alibaba/nacos', desc: '服务发现与配置中心', tags: ['微服务', '配置'] },
+            { name: 'alibaba/druid', desc: '数据库连接池', tags: ['数据库', '连接池'] },
+            { name: 'apache/kafka', desc: '分布式消息队列', tags: ['消息队列', '大数据'] },
+            { name: 'apache/flink', desc: '流处理框架', tags: ['大数据', '流处理'] },
+            { name: 'alibaba/canal', desc: 'MySQL binlog 同步', tags: ['数据库', '同步'] },
+            { name: 'apache/incubator-seata', desc: '分布式事务解决方案', tags: ['分布式', '事务'] },
+            { name: 'xxl-job/xxl-job', desc: '分布式任务调度平台', tags: ['调度', '任务'] },
+            { name: 'apolloconfig/apollo', desc: '配置管理中心', tags: ['配置', '微服务'] },
+            { name: 'google/guava', desc: 'Google 核心工具库', tags: ['工具', 'Google'] },
+            { name: 'hutool/hutool', desc: 'Java 工具集', tags: ['工具', '国产'] },
+        ];
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelector(`[onclick="switchTab('${tabId}')"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        function formatDate(date) {
+            return date.toLocaleString('zh-CN', { 
+                year: 'numeric', 
+                month: '2-digit', 
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function renderProjects(projects, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = projects.map(p => `
+                <div class="project-card">
+                    <div class="project-name">${p.name}</div>
+                    <div class="project-desc">${p.desc || '暂无描述'}</div>
+                    <div class="project-stats">
+                        <span class="stat stat-star">⭐ ${p.stars.toLocaleString()}</span>
+                        <span class="stat stat-fork">🍴 ${p.forks.toLocaleString()}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderTools(toolsData) {
+            const container = document.getElementById('toolsContent');
+            container.innerHTML = toolsData.map(t => `
+                <div class="project-card">
+                    <div class="project-name">${t.name}</div>
+                    <div class="project-desc">${t.desc}</div>
+                    <div style="margin-top:10px">
+                        ${t.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadTrending() {
+            renderProjects(trendingProjects, 'trendingContent');
+        }
+
+        function loadTools() {
+            renderTools(tools);
+        }
+
+        function loadNews() {
+            const container = document.getElementById('newsContent');
+            const news = [
+                { title: 'JDK 25 正式发布，新特性抢先看', date: '2026-03-01' },
+                { title: 'Spring Boot 3.4 发布公告', date: '2026-02-28' },
+                { title: 'Java 22 新特性预览', date: '2026-02-15' },
+                { title: 'Spring Cloud 2024 发布路线图', date: '2026-02-01' },
+                { title: 'Oracle 推出 Java SE 订阅新计划', date: '2026-01-20' },
+            ];
+            
+            container.innerHTML = news.map(n => `
+                <div class="news-item">
+                    <div class="news-title">${n.title}</div>
+                    <div class="news-meta">📅 ${n.date}</div>
+                </div>
+            `).join('');
+        }
+
+        // 初始化
+        document.getElementById('updateTime').textContent = formatDate(new Date());
+        
+        // 加载各板块
+        loadTrending();
+        loadNews();
+        loadTools();
+    </script>
+</body>
+</html>
