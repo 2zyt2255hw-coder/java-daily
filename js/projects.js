@@ -1,3 +1,19 @@
+// 项目列表数据
+const trendingProjects = [
+    { name: 'Snailclimb/JavaGuide', stars: 154109, forks: 46126, desc: 'Java 面试 & 后端开发指南' },
+    { name: 'krahets/hello-algo', stars: 122801, forks: 14869, desc: '动画图解数据结构与算法教程' },
+    { name: 'GrowingGit/GitHub-Chinese-Top-Charts', stars: 106681, forks: 13528, desc: 'GitHub中文排行榜' },
+    { name: 'iluwatar/java-design-patterns', stars: 93798, forks: 27375, desc: 'Java 设计模式' },
+    { name: 'macrozheng/mall', stars: 83054, forks: 29671, desc: '电商系统实战项目' },
+    { name: 'spring-projects/spring-boot', stars: 80197, forks: 41857, desc: 'Spring Boot 官方框架' },
+    { name: 'doocs/advanced-java', stars: 78880, forks: 19275, desc: 'Java 面试进阶指南' },
+    { name: 'MisterBooo/LeetCodeAnimation', stars: 76720, forks: 13989, desc: 'LeetCode 动画题解' },
+    { name: 'elastic/elasticsearch', stars: 76295, forks: 25807, desc: '分布式搜索引擎' },
+    { name: 'NationalSecurityAgency/ghidra', stars: 65496, forks: 7224, desc: '软件逆向工程框架' },
+    { name: 'TheAlgorithms/Java', stars: 65172, forks: 21010, desc: 'Java 算法实现' },
+    { name: 'spring-projects/spring-framework', stars: 59728, forks: 38911, desc: 'Spring 核心框架' },
+];
+
 // 项目中文详情数据
 const projectDetails = {
     'Snailclimb/JavaGuide': {
@@ -56,7 +72,7 @@ const projectDetails = {
     
     'elastic/elasticsearch': {
         title: 'Elasticsearch - 分布式搜索引擎',
-        description: 'Elasticsearch 是一个基于 Lucene 的分布式搜索和分析引擎。广泛应用于全文搜索、日志分析、安全分析等场景。',
+        description: 'Elasticsearch 是一个基于 Lucene 的分布式搜索和分析引擎。广泛应用于全文搜索、日志分析，安全分析等场景。',
         tags: '<span class="tag">搜索</span><span class="tag">大数据</span><span class="tag">日志</span>',
         install: '```bash\n# 方式一：Docker\ndocker run -d -p 9200:9200 -p 9300:9300 \\\n  -e "discovery.type=single-node" \\\n  elasticsearch:8.11.0\n\n# 方式二：下载安装\n# https://www.elastic.co/downloads/elasticsearch\n```',
         usage: '```bash\n# 创建索引\ncurl -X PUT "localhost:9200/my_index"\n\n# 索引文档\ncurl -X POST "localhost:9200/my_index/_doc/1" \\\n  -H "Content-Type: application/json" \\\n  -d \'{"title": "Hello ES", "content": "Elasticsearch"}\'\n\n# 搜索\ncurl -X GET "localhost:9200/my_index/_search?q=Hello"\n```',
@@ -90,8 +106,3 @@ const projectDetails = {
         resources: '• 官方文档：https://ghidra-sre.org/\n• 学习资源：B 站搜 "Ghidra 逆向"'
     }
 };
-
-// 导出供 HTML 使用
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = projectDetails;
-}
